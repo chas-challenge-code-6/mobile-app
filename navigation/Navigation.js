@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
+import TempScreen from '../screens/TempScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +22,7 @@ const Navigation = () => {
             />
             <Tab.Screen
                 name="Report"
-                component={HomeScreen}
+                component={TempScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="information-variant" color={'#333'} size={size} />
