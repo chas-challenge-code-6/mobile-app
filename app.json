@@ -19,7 +19,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.bexgren.mobileapp",
-      "versionCode": 1,
+      "versionCode": 4,
       "permissions": []
     },
     "web": {
