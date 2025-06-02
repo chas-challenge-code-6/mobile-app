@@ -21,12 +21,12 @@
 //     }
 // };
 
-const BASE_URL = "http://localhost:8766/api/";
+const BASE_URL = "https://backend-belz.onrender.com/";
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const getData = async (title) => {
   try {
-    const response = await fetch(`${API_URL}/data/latest/`, {});
+    const response = await fetch(`${API_URL}/api/data/latest/`, {});
 
     if (!response.ok) throw new Error("Error collecting data");
 
