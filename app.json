@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
 
-    "platforms": ["android", "web"],
+    "platforms": ["android", "web", "ios"],
     "sdkVersion": "53.0.9",
     "updates": {
       "fallbackToCacheTimeout": 0,
