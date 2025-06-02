@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated, StatusBar } from "react-native";
+import { View, StyleSheet, Animated, StatusBar, Text } from "react-native";
 import Shield from "../components/Shield";
 import Sentinel from "../components/Sentinel";
 
