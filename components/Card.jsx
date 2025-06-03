@@ -2,11 +2,9 @@ import { ActivityIndicator, Text, View } from "react-native";
 import { useEffect, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-//import { getData } from "../services/api"; // För eventuell framtida användning (api-koppling)
-
-const Card = ({ title, arrow }) => {
+import { getData } from "../services/api"; // För eventuell framtida användning (api-koppling)
+const Card = ({ title, arrow, token }) => {
   const { theme } = useTheme(); // Get theme
-
   const [value, setValue] = useState("");
   const [icon, setIcon] = useState("");
   const [unit, setUnit] = useState("");
@@ -14,8 +12,8 @@ const Card = ({ title, arrow }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // const apiData = getData(title); // För eventuell framtida användning (api-koppling)
-    // console.log(apiData); // För eventuell framtida användning (api-koppling)
+    const apiData = getData(token, title); // För eventuell framtida användning (api-koppling)
+    //console.log(apiData); // För eventuell framtida användning (api-koppling)
     const data = require("../data/data.json");
     let value = "";
 

@@ -7,16 +7,17 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirstNotWatched } from "../utils/notWatchedNews";
 import { useNotWatched } from "../context/NewsContext";
+import { useAuth } from "../context/AuthContext";
 
 const CardSection = ({ title, prevTitle, route, arrow = true }) => {
   const { theme } = useTheme(); // Get theme
-
   const { stackTitle } = route ? route.params : {};
-  const [news, setNews] = useState([]);
   const { notWatched, setNotWatched } = useNotWatched();
-  let notWatchList = [];
+  const { savedToken, checkToken } = useAuth();
+  const [news, setNews] = useState([]);
   const styles = createStyles(theme, notWatched);
   const navigations = useNavigation();
+  let notWatchList = [];
   let category = "";
 
   if (title !== undefined || null) {
@@ -32,9 +33,12 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
   const singleNews = news.find((item) => item.heading === title);
 
   useEffect(() => {
+    const getToken = async () => {
+      await checkToken();
+    };
+    getToken();
     getFirstNotWatched(notWatchList, setNotWatched, notWatched, news);
   }, []);
-
   const handleNewsPress = (item) => {
     const saveNotWatched = async () => {
       try {
@@ -128,7 +132,11 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
             })
           }
         >
-          <Card title={category.toLowerCase()} arrow={arrow} />
+          <Card
+            title={category.toLowerCase()}
+            token={savedToken}
+            arrow={arrow}
+          />
         </Pressable>
       )}
     </View>

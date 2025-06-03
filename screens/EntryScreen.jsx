@@ -24,11 +24,17 @@ const EntryScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* <StatusBar backgroundColor="#D5E2E2" barStyle="dark-content" hidden={true} />
-      <Animated.View style={[styles.logoContainer, { opacity, transform: [{ scale }] }]}>
+      <StatusBar
+        backgroundColor="#D5E2E2"
+        barStyle="dark-content"
+        hidden={true}
+      />
+      <Animated.View
+        style={[styles.logoContainer, { opacity, transform: [{ scale }] }]}
+      >
         <Shield width={120} height={120} />
         <Sentinel width={160} height={160} />
-      </Animated.View> */}
+      </Animated.View>
       <Text>Testa skärm</Text>
     </View>
   );

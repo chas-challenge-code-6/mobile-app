@@ -1,13 +1,14 @@
-import { createContext, useState, useContext, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { createContext, useState, useContext, useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
 
 /* Expo-secure-store fungerar inte i webbläsare – bara i Android/iOS. 
 Om vi vill stötta webben måste vi lägga till ett fallback som t ex använder AsyncStorage i webbläsaren. */
-import { Platform } from 'react-native'; 
+import { Platform } from "react-native";
+import { loginFetch, userFetch } from "../services/api";
 
 /* Skapar en global inloggningskontext som andra komponenter i appen 
 kan använda för att veta om användaren är inloggad eller inte */
-const AuthContext = createContext(); 
+const AuthContext = createContext();
 
 // Wrapper för SecureStore + fallback till localStorage på webben
 // Eget objekt: Storage – fungerar både på mobil och webb
@@ -15,25 +16,25 @@ const AuthContext = createContext();
 // Om ja: använd localStorage, annars expo-secure-store
 const Storage = {
   getItemAsync: async (key) => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       return localStorage.getItem(key);
     } else {
       return await SecureStore.getItemAsync(key);
     }
   },
   // När vi vill SPARA ett värde, kollar vi om vi kör i webbläsare (Platform.OS === 'web')
-  // Om ja: använd localStorage, annars expo-secure-store 
+  // Om ja: använd localStorage, annars expo-secure-store
   setItemAsync: async (key, value) => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       localStorage.setItem(key, value);
     } else {
       await SecureStore.setItemAsync(key, value);
     }
   },
   // När vi vill TA BORT (LOGGA UT) ett värde, kollar vi om vi kör i webbläsare (Platform.OS === 'web')
-  // Om ja: använd localStorage, annars expo-secure-store 
-   deleteItemAsync: async (key) => {
-    if (Platform.OS === 'web') {
+  // Om ja: använd localStorage, annars expo-secure-store
+  deleteItemAsync: async (key) => {
+    if (Platform.OS === "web") {
       localStorage.removeItem(key); // För webb
     } else {
       await SecureStore.deleteItemAsync(key); // För mobil
@@ -46,17 +47,18 @@ export const AuthProvider = ({ children }) => {
   // Två tillstånd:
   const [isAuthenticated, setIsAuthenticated] = useState(false); //  isAuthenticated = om användaren är inloggad
   const [loading, setLoading] = useState(true); // loading = om vi fortfarande laddar data (t ex kontrollerar om token finns)
+  const [savedToken, setSavedToken] = useState(null);
+  let saveToken = savedToken;
 
   /* När appen startar körs checkToken(). Den försöker hämta ett sparat token.
   Om det finns ett token (!!token = true), sätts isAuthenticated till true.
   Annars blir det false. I båda fall: loading sätts till false när vi är klara. */
   useEffect(() => {
     const checkToken = async () => {
-      console.log("Run checkToken");
       try {
-        const token = await Storage.getItemAsync('token');
-        console.log("Token found:", token);
+        const token = await Storage.getItemAsync("token");
         setIsAuthenticated(!!token);
+        saveToken = token;
       } catch (err) {
         console.error("Failed to load token:", err);
         setIsAuthenticated(false);
@@ -67,16 +69,70 @@ export const AuthProvider = ({ children }) => {
 
     checkToken();
   }, []);
+  // get token from cardsection-component
+  const checkToken = async () => {
+    try {
+      const token = await Storage.getItemAsync("token");
+      setSavedToken(token);
+      return token;
+    } catch (err) {
+      console.error("Failed to load token:", err);
+    }
+  };
+  const getUserInfo = async () => {
+    try {
+      const userData = await Storage.getItemAsync("userProfile");
+      if (!userData) {
+        throw new Error("No user is logged in");
+      }
+      console.log(userData);
+      return userData;
+    } catch (error) {
+      console.error("Login error", error);
+      return null;
+    }
+  };
 
   /* Ett enkelt "låtsas-login". Just nu loggar vi in vem som helst som fyller i något i formuläret.
   Om användaren skriver in inloggningsuppgifter – eller just guest/guest – sparas en token.
   Användaren markeras som inloggad (setIsAuthenticated(true)). 
   */
-  const login = async (username, password) => {
-    if ((username === "guest" && password === "guest") || (username && password)) {
-      await Storage.setItemAsync("token", "dummyToken123");
-      setIsAuthenticated(true);
+  const login = async (username, password, setError) => {
+    if (
+      /*(username === "guest" && password === "guest") ||*/ username &&
+      password
+    ) {
+      try {
+        const result = await loginFetch(username, password);
+        if (!result || !result.data.token) {
+          setError("Invalid credentials");
+          return;
+        }
+        await Storage.setItemAsync("token", result.data.token);
+        setSavedToken(await result.data.token);
+        const profile = await userFetch(result.data.token);
+        if (profile) {
+          const profileObject = {
+            username: profile.username,
+            email: profile.email,
+            phonenumber: profile.phone_number,
+            workplace: profile.workplace,
+            jobtitle: profile.job_title,
+          };
+          await Storage.setItemAsync(
+            "userProfile",
+            JSON.stringify(profileObject)
+          );
+        }
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Login error", error);
+        setError("Something went wrong with logging in");
+      }
+      // await Storage.setItemAsync("token", "dummyToken123");
+      //  setIsAuthenticated(true);
     } else {
+      setError("Fill in both your username and password");
       throw new Error("Invalid credentials");
     }
   };
@@ -89,7 +145,17 @@ export const AuthProvider = ({ children }) => {
 
   // Gör isAuthenticated, login(), logout() och loading tillgängliga för alla komponenter via context
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        loading,
+        login,
+        logout,
+        getUserInfo,
+        savedToken,
+        checkToken,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

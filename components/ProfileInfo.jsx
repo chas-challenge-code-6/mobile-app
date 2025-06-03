@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 
 const ProfileInfo = () => {
   const { theme } = useTheme();
+  const { getUserInfo } = useAuth();
 
   // Temporär lokal state – kan ersättas med API-data
   const [profileData, setProfileData] = useState({
@@ -15,15 +17,16 @@ const ProfileInfo = () => {
   });
 
   // Förbered för API-hämtning
-  useEffect(() => {
-    // TODO: Ersätt URL nedan när API är tillgängligt
-    /*
+  // useEffect(() => {
+
+  // TODO: Ersätt URL nedan när API är tillgängligt
+  /*
     fetch("https://our-api-url.com/profile")
       .then((res) => res.json())
       .then((data) => setProfileData(data))
       .catch((error) => console.error("Error fetching profile:", error));
     */
-  }, []);
+  // }, []);
 
   const styles = createStyles(theme);
 
