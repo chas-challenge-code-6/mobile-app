@@ -1,3 +1,4 @@
+// filepath: /home/fredrik/Kod/SUVX/CC/mobile-app/screens/StatisticsScreen.jsx
 import { Text, View } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 import Layout from "../components/layout/Layout";
@@ -21,4 +22,3 @@ const StatisticsScreen = () => {
 }
 
 export default StatisticsScreen;
-

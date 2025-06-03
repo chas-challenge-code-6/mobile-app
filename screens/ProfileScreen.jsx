@@ -1,21 +1,45 @@
-import { StyleSheet, Image, Button, Text, View } from "react-native";
+import { StyleSheet, Image, Button, Text, View, RefreshControl } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 import Layout from "../components/layout/Layout";
 import ProfileInfo from "../components/ProfileInfo";
 import PrimaryButton from '../components/PrimaryButton';
 import { useAuth } from '../context/AuthContext';
+import { useState } from "react";
 
 const ProfileScreen = () => {
   const { theme, toggleTheme } = useTheme(); //  theme: ett objekt som innehåller colors, textStyles m.m och även ett mode - light eller dark
   const { logout } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleLogout = () => {
     console.log("Logging out...");
     logout();
   };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    // Trigga om-rendering av ProfileInfo genom att ändra key
+    setRefreshKey(prev => prev + 1);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
   
   return (
-    <Layout scrollable>
+    <Layout 
+      scrollable
+      refreshControl={
+        <RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={onRefresh}
+          colors={[theme.colors.primary]} // Android
+          tintColor={theme.colors.primary} // iOS
+          title="Hämtar profildata..." // iOS
+          titleColor={theme.colors.text} // iOS
+        />
+      }
+    >
       <View style={styles.container}>
         
         <Image
@@ -34,7 +58,7 @@ const ProfileScreen = () => {
         }}
       >
        
-      <ProfileInfo />
+      <ProfileInfo key={refreshKey} />
 
       <PrimaryButton
         title="Logout"

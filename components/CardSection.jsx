@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirstNotWatched } from "../utils/notWatchedNews";
 import { useNotWatched } from "../context/NewsContext";
+import { getNews } from "../services/api"; // Importera API-funktionen
 
 const CardSection = ({ title, prevTitle, route, arrow = true }) => {
   const { theme } = useTheme(); // Get theme
@@ -25,15 +26,42 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
   if (stackTitle !== undefined) {
     category = stackTitle.replaceAll(" ", "_");
   }
-  if (news == "") {
-    const data = require("../data/news.json");
-    setNews(data);
-  }
+
+  // Hämta nyheter från API eller fallback till mockdata
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        console.log("CardSection: Fetching news from API...");
+        const apiNews = await getNews();
+        console.log("CardSection: API response:", apiNews);
+        if (apiNews && apiNews.length > 0) {
+          console.log("CardSection: Använder livedata för nyheter");
+          setNews(apiNews);
+        } else {
+          console.log("CardSection: API inte tillgängligt, använder mockdata för nyheter");
+          const mockNews = require("../data/news.json");
+          setNews(mockNews);
+        }
+      } catch (error) {
+        console.error("CardSection: Error fetching news:", error);
+        // Fallback till mockdata
+        const mockNews = require("../data/news.json");
+        setNews(mockNews);
+      }
+    };
+
+    if (news.length === 0) {
+      fetchNews();
+    }
+  }, []);
+
   const singleNews = news.find((item) => item.heading === title);
 
   useEffect(() => {
-    getFirstNotWatched(notWatchList, setNotWatched, notWatched, news);
-  }, []);
+    if (news.length > 0) {
+      getFirstNotWatched(notWatchList, setNotWatched, notWatched, news);
+    }
+  }, [news]);
 
   const handleNewsPress = (item) => {
     const saveNotWatched = async () => {

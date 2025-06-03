@@ -49,16 +49,39 @@ export const AuthProvider = ({ children }) => {
 
   /* När appen startar körs checkToken(). Den försöker hämta ett sparat token.
   Om det finns ett token (!!token = true), sätts isAuthenticated till true.
-  Annars blir det false. I båda fall: loading sätts till false när vi är klara. */
+Annars blir det false. I båda fall: loading sätts till false när vi är klara. */
   useEffect(() => {
     const checkToken = async () => {
-      console.log("Run checkToken");
+      console.log("AuthContext: Run checkToken");
       try {
         const token = await Storage.getItemAsync('token');
-        console.log("Token found:", token);
-        setIsAuthenticated(!!token);
+        console.log("AuthContext: Token found:", token ? "Token exists" : "No token found");
+        
+        // Kolla om korrekt
+        if (token) {
+          console.log("AuthContext: Testing token validity...");
+          try {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/auth/me`, {
+              headers: { "Authorization": `Bearer ${token}` }
+            });
+            
+            if (response.status === 401) {
+              console.log("AuthContext: Token is invalid, clearing it...");
+              await Storage.deleteItemAsync('token');
+              setIsAuthenticated(false);
+            } else {
+              console.log("AuthContext: Token is valid");
+              setIsAuthenticated(true);
+            }
+          } catch (error) {
+            console.log("AuthContext: Error testing token, keeping it for now");
+            setIsAuthenticated(!!token);
+          }
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch (err) {
-        console.error("Failed to load token:", err);
+        console.error("AuthContext: Failed to load token:", err);
         setIsAuthenticated(false);
       } finally {
         setLoading(false);
@@ -68,16 +91,36 @@ export const AuthProvider = ({ children }) => {
     checkToken();
   }, []);
 
-  /* Ett enkelt "låtsas-login". Just nu loggar vi in vem som helst som fyller i något i formuläret.
-  Om användaren skriver in inloggningsuppgifter – eller just guest/guest – sparas en token.
-  Användaren markeras som inloggad (setIsAuthenticated(true)). 
+  /* Riktigt login
   */
   const login = async (username, password) => {
-    if ((username === "guest" && password === "guest") || (username && password)) {
-      await Storage.setItemAsync("token", "dummyToken123");
-      setIsAuthenticated(true);
-    } else {
-      throw new Error("Invalid credentials");
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL;
+      console.log("AuthContext: Attempting login with API...");
+      
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password })
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed - Invalid credentials");
+      }
+
+      const result = await response.json();
+      console.log("AuthContext: Login response:", result);
+      
+      if (result.status === "success" && result.data.token) {
+        await Storage.setItemAsync("token", result.data.token);
+        setIsAuthenticated(true);
+        console.log("AuthContext: Login successful, token stored");
+      } else {
+        throw new Error("Invalid login response");
+      }
+    } catch (error) {
+      console.error("AuthContext: Login error:", error);
+      throw new Error("Login failed - Please check your credentials");
     }
   };
 
@@ -87,9 +130,19 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
   };
 
-  // Gör isAuthenticated, login(), logout() och loading tillgängliga för alla komponenter via context
+  // Hämta för tillfället sparade token
+  const getToken = async () => {
+    try {
+      return await Storage.getItemAsync('token');
+    } catch (error) {
+      console.error("Failed to get token:", error);
+      return null;
+    }
+  };
+
+  // Gör isAuthenticated, login(), logout(), getToken() och loading tillgängliga för alla komponenter via context
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout, getToken }}>
       {children}
     </AuthContext.Provider>
   );

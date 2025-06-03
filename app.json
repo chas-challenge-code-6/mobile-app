@@ -4,15 +4,29 @@
     "slug": "mobile-app",
     "version": "1.0.0",
     "orientation": "portrait",
-
-    "platforms": ["android"],
-    "sdkVersion": "53.0.9",
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      "react-native-screens"
+    ],
+    "platforms": [
+      "android",
+      "ios",
+      "web"
+    ],
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/c0e6a283-104a-4b7e-9464-af3803db3ff8"
     },
-
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -22,19 +36,38 @@
       "versionCode": 1,
       "permissions": []
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": ["expo-font", "expo-secure-store"],
-    "extra": {
-      "eas": {
-        "projectId": "c0e6a283-104a-4b7e-9464-af3803db3ff8"
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bexgren.mobileapp",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "SUVX Mobile Sensor App",
+      "shortName": "SUVX App",
+      "lang": "sv",
+      "scope": "/",
+      "themeColor": "#007AFF",
+      "backgroundColor": "#ffffff",
+      "startUrl": "/",
+      "display": "standalone",
+      "orientation": "portrait",
+      "preferRelatedApplications": false,
+      "bundler": "metro"
     },
-
-    "owner": "bexgren"
+    "plugins": [
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "runtimeVersion": "1.0.0",
+    "owner": "fldc",
+    "extra": {
+      "eas": {
+        "projectId": "cd936f0e-36ba-4842-85be-e3e226197574"
+      }
+    }
   }
 }

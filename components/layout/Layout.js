@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useTheme } from "../../context/ThemeContext";
 
-export default function Layout({ children, scrollable = false, style }) {
+export default function Layout({ children, scrollable = false, style, refreshControl }) {
   const { theme } = useTheme();
 
   const Container = scrollable ? ScrollView : View;
@@ -15,6 +15,7 @@ export default function Layout({ children, scrollable = false, style }) {
         { backgroundColor: theme.colors.background },
       ]}
       showsVerticalScrollIndicator={false}
+      refreshControl={scrollable ? refreshControl : undefined}
     >
       {children}
     </Container>

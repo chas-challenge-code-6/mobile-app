@@ -34,3 +34,15 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+#vscode
+.vscode
+
+# env
+.env
+
+# whatever
+public
+
+android
+ios
