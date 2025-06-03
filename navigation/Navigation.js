@@ -9,6 +9,9 @@ import { useAuth } from "../context/AuthContext";
 import DrawerNavigator from "./DrawerNavigator";
 import EntryScreen from "../screens/EntryScreen";
 import LoginFormScreen from "../screens/LoginFormScreen";
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
+import ResetPasswordScreen from '../screens/ResetPasswordScreen'
+
 
 const Navigation = () => {
   const { theme } = useTheme();
@@ -43,11 +46,17 @@ const Navigation = () => {
       <SafeAreaView style={styles.safeArea}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {isAuthenticated ? (
-              <Stack.Screen name="MainApp" component={DrawerNavigator} />
-            ) : (
+          {isAuthenticated ? (
+            <Stack.Screen name="MainApp" component={DrawerNavigator} />
+          ) : (
+            <>
               <Stack.Screen name="Login" component={LoginFormScreen} />
-            )}
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+              <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />  
+
+            </>
+          )}
+
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

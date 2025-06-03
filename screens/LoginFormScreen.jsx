@@ -63,6 +63,13 @@ const LoginFormScreen = ({ navigation }) => {
 
               {error && <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>}
 
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+              <Text style={{ color: '#007BFF', marginTop: 10, textAlign: 'center' }}>
+                Forgot password?
+              </Text>
+            </TouchableOpacity>
+
+
             </View>
     </Layout>
   );
