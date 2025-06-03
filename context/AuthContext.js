@@ -74,6 +74,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = await Storage.getItemAsync("token");
       setSavedToken(token);
+      console.log(savedToken);
       return token;
     } catch (err) {
       console.error("Failed to load token:", err);
@@ -110,20 +111,20 @@ export const AuthProvider = ({ children }) => {
         }
         await Storage.setItemAsync("token", result.data.token);
         setSavedToken(await result.data.token);
-        const profile = await userFetch(result.data.token);
-        if (profile) {
-          const profileObject = {
-            username: profile.username,
-            email: profile.email,
-            phonenumber: profile.phone_number,
-            workplace: profile.workplace,
-            jobtitle: profile.job_title,
-          };
-          await Storage.setItemAsync(
-            "userProfile",
-            JSON.stringify(profileObject)
-          );
-        }
+        // const profile = await userFetch(result.data.token);
+        // if (profile) {
+        //   const profileObject = {
+        //     username: profile.username,
+        //     email: profile.email,
+        //     phonenumber: profile.phone_number,
+        //     workplace: profile.workplace,
+        //     jobtitle: profile.job_title,
+        //   };
+        //   await Storage.setItemAsync(
+        //     "userProfile",
+        //     JSON.stringify(profileObject)
+        //   );
+        // }
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Login error", error);
@@ -149,11 +150,13 @@ export const AuthProvider = ({ children }) => {
       value={{
         isAuthenticated,
         loading,
+        setLoading,
         login,
         logout,
         getUserInfo,
         savedToken,
         checkToken,
+        setSavedToken,
       }}
     >
       {children}

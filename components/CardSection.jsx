@@ -13,7 +13,7 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
   const { theme } = useTheme(); // Get theme
   const { stackTitle } = route ? route.params : {};
   const { notWatched, setNotWatched } = useNotWatched();
-  const { savedToken, checkToken } = useAuth();
+  const { savedToken, setSavedToken, checkToken } = useAuth();
   const [news, setNews] = useState([]);
   const styles = createStyles(theme, notWatched);
   const navigations = useNavigation();
@@ -33,10 +33,6 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
   const singleNews = news.find((item) => item.heading === title);
 
   useEffect(() => {
-    const getToken = async () => {
-      await checkToken();
-    };
-    getToken();
     getFirstNotWatched(notWatchList, setNotWatched, notWatched, news);
   }, []);
   const handleNewsPress = (item) => {
@@ -46,10 +42,6 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
           "NotWatched",
           JSON.stringify(notWatchList)
         );
-
-        // if (!result) {
-        //   throw new Error("Problem with saving not watched status to storage");
-        // }
       } catch (error) {
         console.error(error);
       }
@@ -132,11 +124,7 @@ const CardSection = ({ title, prevTitle, route, arrow = true }) => {
             })
           }
         >
-          <Card
-            title={category.toLowerCase()}
-            token={savedToken}
-            arrow={arrow}
-          />
+          <Card title={category.toLowerCase()} arrow={arrow} />
         </Pressable>
       )}
     </View>

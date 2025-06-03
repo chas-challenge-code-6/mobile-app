@@ -35,7 +35,6 @@ const EntryScreen = () => {
         <Shield width={120} height={120} />
         <Sentinel width={160} height={160} />
       </Animated.View>
-      <Text>Testa skärm</Text>
     </View>
   );
 };
