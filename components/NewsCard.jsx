@@ -28,7 +28,7 @@ const NewsCard = ({ item, arrow, showMore }) => {
   }, []);
 
   return (
-    <View style={styles.outerContainer}>
+    <View style={styles.outerContainer} testID="newsCard">
       <View key={item.id} style={styles.innerContainer}>
         <View style={styles.topRow}>
           <Text style={theme.textStyles.textBody}>{date}</Text>
