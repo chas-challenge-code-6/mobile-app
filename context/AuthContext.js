@@ -100,17 +100,19 @@ export const AuthProvider = ({ children }) => {
   */
   const login = async (username, password, setError) => {
     if (
-      /*(username === "guest" && password === "guest") ||*/ username &&
-      password
+      (username === "guest" && password === "guest") ||
+      (username && password)
     ) {
       try {
-        const result = await loginFetch(username, password);
-        if (!result || !result.data.token) {
-          setError("Invalid credentials");
-          return;
-        }
-        await Storage.setItemAsync("token", result.data.token);
-        setSavedToken(await result.data.token);
+        // const result = await loginFetch(username, password);
+        // if (!result || !result.data.token) {
+        //   setError("Invalid credentials");
+        //   return;
+        // }
+        // await Storage.setItemAsync("token", result.data.token);
+        // setSavedToken(await result.data.token);
+
+        setSavedToken("newToken");
         // const profile = await userFetch(result.data.token);
         // if (profile) {
         //   const profileObject = {
