@@ -18,7 +18,14 @@ const DataScreen = ({ route, title, navigation }) => {
   return (
     <Layout scrollable>
       <View style={{ flex: 1, gap: 24 }}>
-        <Pressable onPress={() => handleOnPress()}>
+        <Pressable
+          onPress={() => handleOnPress()}
+          accessibilityRole="button"
+          accessibilityLabel={`Button to go back`}
+          accessibilityHint={`Go back to ${
+            prevTitle === "News" ? "newspage" : "previous page"
+          }`}
+        >
           <MaterialCommunityIcons
             name="chevron-left"
             size={40}

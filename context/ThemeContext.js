@@ -201,7 +201,7 @@ export const ThemeProvider = ({ children }) => {
 
   if (!fontsLoaded) {
     return (
-      <View>
+      <View testID="loadingFonts">
         <Text>Loading fonts...</Text>
       </View>
     );

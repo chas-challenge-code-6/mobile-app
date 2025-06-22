@@ -4,17 +4,18 @@ import DataScreen from "../screens/DataScreen";
 import TabNavigator from "./TabNavigator";
 import Logo from "../components/Logo";
 import { useTheme } from "../context/ThemeContext";
+import dataList from "../utils/dataList";
 
 const Drawer = createDrawerNavigator();
 
-const screenList = [
-  "Temperature",
-  "Humidity",
-  "Heart rate",
-  "Steps",
-  "Gas",
-  "Noise level",
-];
+// const screenList = [
+//   "Temperature",
+//   "Humidity",
+//   "Heart rate",
+//   "Steps",
+//   "Gas",
+//   "Noise level",
+// ];
 
 const DrawerNavigator = () => {
   const { theme } = useTheme();
@@ -42,6 +43,7 @@ const DrawerNavigator = () => {
           drawerInactiveTintColor: theme.colors.heading,
           headerTitleAlign: "left", // Fixar vänsterjustering i iOS
           headerTintColor: theme.colors.tabicon,
+          testID: "drawerNav",
         }}
       >
         <Drawer.Screen
@@ -66,7 +68,7 @@ const DrawerNavigator = () => {
             ),
           }}
         />
-        {screenList.map((item, index) => (
+        {dataList.map((item, index) => (
           <Drawer.Screen
             key={index}
             name={item}

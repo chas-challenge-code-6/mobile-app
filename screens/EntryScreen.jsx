@@ -23,7 +23,7 @@ const EntryScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="entryView">
       <StatusBar
         backgroundColor="#D5E2E2"
         barStyle="dark-content"

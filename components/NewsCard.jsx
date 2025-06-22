@@ -32,7 +32,11 @@ const NewsCard = ({ item, arrow, showMore }) => {
       <View key={item.id} style={styles.innerContainer}>
         <View style={styles.topRow}>
           <Text style={theme.textStyles.textBody}>{date}</Text>
-          <View>
+          <View
+            accessibilityRole="button"
+            accessibilityLabel="Button to go back"
+            accessibilityHint="Go back to previous page"
+          >
             {arrow && (
               <MaterialCommunityIcons
                 name="chevron-right"
